@@ -14,7 +14,7 @@ namespace WebPageTestAutomation.Core.Test.Core
     public class WebPageTestApiServiceTest
     {
         private readonly string _baseAddress = "http://localhost";
-        private string _correctUrlTest = "http://localhost/jsonResult.php?test=170323_CT_N";
+        private readonly string _correctUrlTest = "http://localhost/jsonResult.php?test=170323_CT_N";
 
         [TestMethod]
         public async Task TestSendTestAsync1()
@@ -46,7 +46,7 @@ namespace WebPageTestAutomation.Core.Test.Core
         public async Task TestGetResultOfTestAsync()
         {
             var service = new WebPageTestApiService(_baseAddress);
-            var result = await service.GetResultOfTestAsync("http://localhost/jsonResult.php?test=170323_CT_N");
+            var result = await service.GetResultOfTestAsync(_correctUrlTest);
             Assert.IsTrue(!string.IsNullOrEmpty(result));
         }
     }

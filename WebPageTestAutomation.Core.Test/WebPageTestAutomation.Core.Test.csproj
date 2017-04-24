@@ -60,6 +60,7 @@
     <Compile Include="Core\WebPageTestExecutorTest.cs" />
     <Compile Include="Core\WebPageTestApiServiceTest.cs" />
     <Compile Include="Core\WebPageTestResultExporterTest.cs" />
+    <Compile Include="Helpers\ConverterResultTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

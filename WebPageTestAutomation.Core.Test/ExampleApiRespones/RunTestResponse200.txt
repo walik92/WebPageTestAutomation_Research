@@ -2,12 +2,12 @@
   "statusCode": 200,
   "statusText": "Ok",
   "data": {
-    "testId": "170325_V2_1M",
-    "ownerKey": "6b3f04bbd364136a2db381d92f8471f81b9607cb",
-    "jsonUrl": "http://localhost/jsonResult.php?test=170325_V2_1M",
-    "xmlUrl": "http://localhost/xmlResult/170325_V2_1M/",
-    "userUrl": "http://localhost/result/170325_V2_1M/",
-    "summaryCSV": "http://localhost/result/170325_V2_1M/page_data.csv",
-    "detailCSV": "http://localhost/result/170325_V2_1M/requests.csv"
+    "testId": "170424_Y2_H",
+    "ownerKey": "ff5beb19bae2a94e7fdaafd09f9e4e8a8515f202",
+    "jsonUrl": "http://localhost/jsonResult.php?test=170424_Y2_H",
+    "xmlUrl": "http://localhost/xmlResult/170424_Y2_H/",
+    "userUrl": "http://localhost/result/170424_Y2_H/",
+    "summaryCSV": "http://localhost/result/170424_Y2_H/page_data.csv",
+    "detailCSV": "http://localhost/result/170424_Y2_H/requests.csv"
   }
 }

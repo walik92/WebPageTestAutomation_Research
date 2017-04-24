@@ -14,14 +14,13 @@ namespace WebPageTestAutomation.Core.Test.Core
     [TestClass]
     public class WebPageTestExecutorTest
     {
+        private readonly string exampleApiResponesPath = @"ExampleApiRespones\";
+        private readonly int numberRunsTest = 1;
         private Mock<IWebPageTestResultExporter> _exporter;
         private Mock<ILog> _logger;
         private Mock<IWebPageTestApiService> _service;
         private List<Browser> browsers;
         private List<Connection> connections;
-
-        private readonly string exampleApiResponesPath = @"ExampleApiRespones\";
-        private readonly int numberRunsTest = 1;
 
         private List<PageModel> pages;
 
@@ -44,7 +43,7 @@ namespace WebPageTestAutomation.Core.Test.Core
         [TestMethod]
         public async Task TestExecute1()
         {
-            var executor = new WebPageTestExecutor(_logger.Object, _service.Object, _exporter.Object, 5);
+            var executor = new WebPageTestExecutor(_logger.Object, _service.Object, _exporter.Object, 1);
             await executor.Execute(pages, browsers, connections, numberRunsTest);
         }
 

@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using log4net;
-using Newtonsoft.Json;
 using WebPageTestAutomation.Core.Enumerators;
+using WebPageTestAutomation.Core.Helpers;
 using WebPageTestAutomation.Core.ICore;
 using WebPageTestAutomation.Core.Models;
 
@@ -37,23 +36,31 @@ namespace WebPageTestAutomation.Core.Core
             {
                 _logger.Info($"Start test: {page.Name}, browser: {browser}, connection: {connection} ");
 
-                var resultTestRequest =
-                    ConvertResultTestRequest(await _pageTestApiService.SendTestAsync(page.Url, browser, connection,
+                //run test
+                var resultTestRequest = ConverterResult.ConvertRequest(
+                    await _pageTestApiService.SendTestAsync(page.Url, browser, connection,
                         numberOfRuns));
+
                 _logger.Info("Test added correctly. " +
                              $"Response of server {resultTestRequest.StatusCode}" +
                              $" : {resultTestRequest.StatusText}");
+
+                //waiting for result
                 do
                 {
-                    var testResult = ConvertResultTestReceive(
-                        await _pageTestApiService.GetResultOfTestAsync(resultTestRequest.Details.JsonUrl));
+                    var testResult = ConverterResult.ConvertReceive(
+                        await _pageTestApiService.GetResultOfTestAsync(resultTestRequest.JsonUrl));
+
                     if (testResult is ResultTestReceiveExpandedModel)
                     {
                         _logger.Debug(testResult as ResultTestReceiveExpandedModel);
+
+                        //save result
                         await _pageTestResultExporter.Save(testResult as ResultTestReceiveExpandedModel,
                             $"{page.Name}_{browser}_{connection}");
                         break;
                     }
+
                     _logger.Info("Waiting from result test of server. " +
                                  $"Response of server {testResult.StatusCode}" +
                                  $" : {testResult.StatusText}");
@@ -62,32 +69,6 @@ namespace WebPageTestAutomation.Core.Core
 
                 _logger.Info($"End test: {page} browser:{browser} connection: {connection} ");
             }
-        }
-
-        private ResultTestRequestModel ConvertResultTestRequest(string json)
-        {
-            _logger.Debug(json);
-            var resultTestRequest = JsonConvert.DeserializeObject
-                <ResultTestRequestModel>(json);
-            if (resultTestRequest.StatusCode != 200)
-                throw new Exception($"Error while adding test. " +
-                                    $"HttpCode {resultTestRequest.StatusCode} " +
-                                    $"ErrorText:{resultTestRequest.StatusText}");
-
-            return resultTestRequest;
-        }
-
-        private ResultTestReceiveBaseModel ConvertResultTestReceive(string json)
-        {
-            _logger.Debug(json);
-            var testResultBase = JsonConvert.DeserializeObject<ResultTestReceiveBaseModel>(json);
-            if (testResultBase.StatusCode < 200)
-                return testResultBase;
-            if (testResultBase.StatusCode == 200)
-                return JsonConvert.DeserializeObject<ResultTestReceiveExpandedModel>(json);
-            throw new Exception("Error while receive results test. " +
-                                $"HttpCode {testResultBase.StatusCode} " +
-                                $"ErrorText:{testResultBase.StatusText}");
         }
     }
 }

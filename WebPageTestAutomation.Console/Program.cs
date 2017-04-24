@@ -18,13 +18,12 @@ namespace WebPageTestAutomation.Console
 
             var pages = new List<PageModel>
             {
-                new PageModel {Url = "onet.pl", Name = "Onet"},
-                new PageModel {Url = "wp.pl", Name = "wp"}
+                new PageModel {Url = "https://onet.pl", Name = "onet"}
             };
-            var browsers = new List<Browser> {Browser.Firefox, Browser.Chrome, Browser.IE};
-            var connections = new List<Connection> {Connection.Cable, Connection.DSL, Connection.ThreeG};
+            var browsers = new List<Browser> {Browser.Chrome};
+            var connections = new List<Connection> {Connection.Cable, Connection.ThreeG};
             var numberRunsTest = 1;
-            var refreshIntervalTime = 10; //sekunds
+            var refreshIntervalTime = 5; //sekunds
             var baseAddress = "http://localhost/";
             var resultPath = @"Result\";
 

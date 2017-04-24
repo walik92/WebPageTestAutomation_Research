@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using WebPageTestAutomation.Core.Core;
@@ -10,35 +9,33 @@ namespace WebPageTestAutomation.Core.Test.Core
     [TestClass]
     public class WebPageTestResultExporterTest
     {
-        private readonly string _folder = @"Result\";
-        private readonly ResultTestReceiveExpandedModel _modelReceive = new ResultTestReceiveExpandedModel();
+        private const string _folder = @"Result\";
+        private ResultTestReceiveExpandedModel _modelReceive;
 
         [TestInitialize]
         public void Init()
         {
-            _modelReceive.Details = new ResultTestReceiveDetails();
-            _modelReceive.Details.Url = "Example.pl";
-            _modelReceive.Details.Runs = new Dictionary<string, Run>();
-            var run1 = new Run();
-            run1.FirstView = new View();
-            run1.RepeatView = new View();
-
-            run1.FirstView.LoadTime = 100;
-            run1.RepeatView.LoadTime = 50;
-            run1.FirstView.BytesOut = 1000;
-            run1.RepeatView.BytesOut = 10000;
-
-            var run2 = new Run();
-            run2.FirstView = new View();
-            run2.RepeatView = new View();
-
-            run2.FirstView.LoadTime = 100;
-            run2.RepeatView.LoadTime = 50;
-            run2.FirstView.BytesOut = 1000;
-            run2.RepeatView.BytesOut = 10000;
-
-            _modelReceive.Details.Runs.Add("1", run1);
-            _modelReceive.Details.Runs.Add("2", run2);
+            _modelReceive = new ResultTestReceiveExpandedModel();
+            _modelReceive.Url = "Example.pl";
+            _modelReceive.Bytes = 100;
+            _modelReceive.Runs.Add(new Run
+            {
+                Id = 1,
+                LoadTime = 1000,
+                RenderStart = 1000,
+                SpeedIndex = 2000,
+                Ttfb = 100,
+                VisuallyComplete = 1000
+            });
+            _modelReceive.Runs.Add(new Run
+            {
+                Id = 2,
+                LoadTime = 1000,
+                RenderStart = 1000,
+                SpeedIndex = 2000,
+                Ttfb = 100,
+                VisuallyComplete = 1000
+            });
         }
 
         [TestMethod]

@@ -43,7 +43,8 @@ namespace WebPageTestAutomation.Core.Core
                 var httpResponseMessage = await client.GetAsync($"runtest.php?url={urlPage}" +
                                                                 "&f=json" +
                                                                 $"&location=Test:{browser}.{connection.GetString()}" +
-                                                                $"&runs={numberRuns}");
+                                                                $"&runs={numberRuns}" +
+                                                                "&fvonly=1");
 
                 return await httpResponseMessage.Content.ReadAsStringAsync();
             }

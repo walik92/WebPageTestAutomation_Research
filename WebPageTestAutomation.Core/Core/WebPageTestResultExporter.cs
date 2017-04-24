@@ -25,23 +25,24 @@ namespace WebPageTestAutomation.Core.Core
         {
             if (result == null)
                 throw new ArgumentException("Result test of page can't be empty");
-            if (result.Details == null)
-                throw new ArgumentException("Result details test of page can't be empty");
-            if (result.Details.Runs == null)
-                throw new ArgumentException("Result details runs test of page can't be empty");
+
+            if (result.Runs == null)
+                throw new ArgumentException("Result runs test of page can't be empty");
 
             if (!Directory.Exists(_folder))
                 Directory.CreateDirectory(_folder);
 
             using (var outputFile = new StreamWriter(GetPathFile(fileName), false))
             {
-                outputFile.WriteLine(result.Details.Url);
-                outputFile.WriteLine("#;FirstView Bytes;FirstView LoadTime[ms];" +
-                                     "RepeatView Bytes;RepeatView LoadTime[ms]");
-                foreach (var run in result.Details.Runs)
+                await outputFile.WriteLineAsync(result.Url);
+                await outputFile.WriteLineAsync($"Bytes: {result.Bytes}");
+                await outputFile.WriteLineAsync(Environment.NewLine);
+                await outputFile.WriteLineAsync("#;TTFB [ms];Render Start[ms];" +
+                                                "Visually Complete[ms];Load TIme[ms];Speed Index");
+                foreach (var run in result.Runs)
                     await outputFile.WriteLineAsync(
-                        $"{run.Key};{run.Value.FirstView.BytesOut};{run.Value.FirstView.LoadTime};" +
-                        $"{run.Value.RepeatView.BytesOut};{run.Value.RepeatView.LoadTime}");
+                        $"{run.Id};{run.Ttfb};{run.RenderStart};{run.VisuallyComplete};" +
+                        $"{run.LoadTime};{run.SpeedIndex}");
             }
         }
 
