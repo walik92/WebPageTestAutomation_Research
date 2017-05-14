@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using WebPageTestAutomation.Core.Enumerators;
 using WebPageTestAutomation.Core.ICore;
 using WebPageTestAutomation.Core.Models;
 
@@ -21,7 +22,7 @@ namespace WebPageTestAutomation.Core.Core
 
         private string FileExtension { get; } = ".txt";
 
-        public async Task Save(ResultTestReceiveExpandedModel result, string fileName)
+        public async Task Save(ResultTestReceiveExpandedModel result, PageModel page, Browser browser, Connection connection)
         {
             if (result == null)
                 throw new ArgumentException("Result test of page can't be empty");
@@ -32,10 +33,11 @@ namespace WebPageTestAutomation.Core.Core
             if (!Directory.Exists(_folder))
                 Directory.CreateDirectory(_folder);
 
-            using (var outputFile = new StreamWriter(GetPathFile(fileName), false))
+            using (var outputFile = new StreamWriter(GetPathFile(page.Name, browser, connection), false))
             {
-                await outputFile.WriteLineAsync(result.Url);
-                await outputFile.WriteLineAsync($"Bytes: {result.Bytes}");
+                await outputFile.WriteLineAsync($"URL: {result.Url}");
+                await outputFile.WriteLineAsync($"Framework: {page.Name} v{page.Version}");
+                await outputFile.WriteLineAsync($"KBytes of JS: {result.KBytes} kB");
                 await outputFile.WriteLineAsync(Environment.NewLine);
                 await outputFile.WriteLineAsync("#;TTFB [ms];Render Start[ms];" +
                                                 "Visually Complete[ms];Load TIme[ms];Speed Index");
@@ -46,11 +48,12 @@ namespace WebPageTestAutomation.Core.Core
             }
         }
 
-        private string GetPathFile(string fileName)
+        private string GetPathFile(string name, Browser browser, Connection connection)
         {
-            if (string.IsNullOrEmpty(fileName) || string.IsNullOrWhiteSpace(fileName))
-                throw new ArgumentException("FileName value can't be empty");
-            return $"{_folder}{fileName}{FileExtension}";
+            if (string.IsNullOrEmpty(name) || string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("Name value can't be empty");
+            return $"{_folder}{name}_{browser}_{connection}{ FileExtension}";
+
         }
     }
 }

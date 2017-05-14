@@ -17,7 +17,7 @@ namespace WebPageTestAutomation.Core.Test.Core
         {
             _modelReceive = new ResultTestReceiveExpandedModel();
             _modelReceive.Url = "Example.pl";
-            _modelReceive.Bytes = 100;
+            _modelReceive.KBytes = 100;
             _modelReceive.Runs.Add(new Run
             {
                 Id = 1,

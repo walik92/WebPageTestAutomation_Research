@@ -10,7 +10,7 @@ namespace WebPageTestAutomation.Core.Models
         }
 
         public IList<Run> Runs { get; set; }
-        public int Bytes { get; set; }
+        public int KBytes { get; set; }
         public string Url { get; set; }
     }
 }

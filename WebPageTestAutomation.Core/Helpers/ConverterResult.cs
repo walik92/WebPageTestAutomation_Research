@@ -8,9 +8,10 @@ namespace WebPageTestAutomation.Core.Helpers
     {
         public static ResultTestReceiveBaseModel ConvertReceive(string json)
         {
+            
             dynamic responseObj = JsonConvert.DeserializeObject(json);
 
-            var statusCode = (int) responseObj.statusCode.Value;
+            var statusCode = (int)responseObj.statusCode.Value;
             string statusText = responseObj.statusText.Value;
 
             if (statusCode < 200)
@@ -27,18 +28,22 @@ namespace WebPageTestAutomation.Core.Helpers
                     StatusCode = statusCode,
                     StatusText = statusText
                 };
-                result.Bytes = responseObj.data.average.firstView.bytesIn;
+                
                 result.Url = responseObj.data.url;
                 foreach (var r in responseObj.data.runs)
                 {
                     var run = new Run();
-                    run.Id = (int) r.Value.firstView.run.Value;
-                    run.LoadTime = (int) r.Value.firstView.loadTime.Value;
-                    run.RenderStart = (int) r.Value.firstView.render.Value;
-                    run.Ttfb = (int) r.Value.firstView.TTFB.Value;
-                    run.SpeedIndex = (int) r.Value.firstView.SpeedIndex.Value;
-                    run.VisuallyComplete = (int) r.Value.firstView.visualComplete.Value;
+                    run.Id = (int)r.Value.firstView.run.Value;
+                    if (r.Value.firstView.loadTime.Value == 0)
+                        throw new Exception("Result response from server is incorrect");
+
+                    run.LoadTime = (int)r.Value.firstView.loadTime.Value;
+                    run.RenderStart = (int)r.Value.firstView.render.Value;
+                    run.Ttfb = (int)r.Value.firstView.TTFB.Value;
+                    run.SpeedIndex = (int)r.Value.firstView.SpeedIndex.Value;
+                    run.VisuallyComplete = (int)r.Value.firstView.visualComplete.Value;
                     result.Runs.Add(run);
+                    result.KBytes = ((int)r.Value.firstView.breakdown.js.bytes)/1024;
                 }
                 return result;
             }
@@ -53,7 +58,7 @@ namespace WebPageTestAutomation.Core.Helpers
 
             var result = new ResultTestRequestModel
             {
-                StatusCode = (int) responseObj.statusCode.Value,
+                StatusCode = (int)responseObj.statusCode.Value,
                 StatusText = responseObj.statusText.Value,
                 JsonUrl = responseObj.data.jsonUrl
             };
