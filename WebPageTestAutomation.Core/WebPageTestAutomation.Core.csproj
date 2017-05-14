@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Enumerators\Browser.cs" />
     <Compile Include="Helpers\ConverterResult.cs" />
     <Compile Include="ICore\IWebPageTestExecutor.cs" />
     <Compile Include="ICore\IWebPageTestResultExporter.cs" />
@@ -53,7 +54,6 @@
     <Compile Include="Core\WebPageTestApiService.cs" />
     <Compile Include="Core\WebPageTestExecutor.cs" />
     <Compile Include="Core\WebPageTestResultExporter.cs" />
-    <Compile Include="Enumerators\Browser.cs" />
     <Compile Include="Enumerators\Connection.cs" />
     <Compile Include="Models\PageModel.cs" />
     <Compile Include="Models\ResultTestReceiveBaseModel.cs" />

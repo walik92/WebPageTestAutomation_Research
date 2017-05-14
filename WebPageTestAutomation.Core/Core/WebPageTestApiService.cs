@@ -42,7 +42,7 @@ namespace WebPageTestAutomation.Core.Core
 
                 var httpResponseMessage = await client.GetAsync($"runtest.php?url={urlPage}" +
                                                                 "&f=json" +
-                                                                $"&location=WPT_Dulles_Chrome.{connection.GetString()}" +
+                                                                $"&location=WPT_eu_frankfurt:{browser}.{connection.GetString()}" +
                                                                 $"&runs={numberRuns}" +
                                                                 "&fvonly=1");
 

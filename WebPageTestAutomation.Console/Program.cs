@@ -16,7 +16,7 @@ namespace WebPageTestAutomation.Console
         private static void Main(string[] args)
         {
             RunTestPages("article-versions", GetActionSetArticleVersions());
-            RunTestPages("latest-versions", GetActionSetLatestVersions());
+           // RunTestPages("latest-versions", GetActionSetLatestVersions());
         }
 
         private static Action<List<PageModel>> GetActionSetArticleVersions()
@@ -24,9 +24,9 @@ namespace WebPageTestAutomation.Console
             return delegate (List<PageModel> pages)
             {
                 pages[0].Version = "1.3.6";
-                pages[1].Version = "1.1.2";
-                pages[2].Version = "1.9.0";
-                pages[3].Version = "0.12.2";
+                //pages[1].Version = "1.1.2";
+                //pages[2].Version = "1.9.0";
+                //pages[3].Version = "0.12.2";
             };
         }
 
@@ -43,33 +43,32 @@ namespace WebPageTestAutomation.Console
 
         private static void RunTestPages(string version, Action<List<PageModel>> setVersions)
         {
-            var browsers = new List<Browser> { Browser.Chrome };
             var pages = new List<PageModel>
             {
-                new PageModel {Url = $"kaiwoklaw.pl/sites/{version}/angular", Name = "Angular", Version = "1.3.6"},
-                new PageModel {Url = $"kaiwoklaw.pl/sites/{version}/backbone", Name = "Backbone"},
-                new PageModel {Url = $"kaiwoklaw.pl/sites/{version}/ember", Name = "Ember"},
-                new PageModel {Url = $"kaiwoklaw.pl/sites/{version}/react", Name = "React"}
+                new PageModel {Url = $"kaiwoklaw.pl/sites/{version}/angular", Name = "Angular"},
+                //new PageModel {Url = $"kaiwoklaw.pl/sites/{version}/backbone", Name = "Backbone"},
+                //new PageModel {Url = $"kaiwoklaw.pl/sites/{version}/ember", Name = "Ember"},
+                //new PageModel {Url = $"kaiwoklaw.pl/sites/{version}/react", Name = "React"}
             };
 
             setVersions(pages);
 
-            var connections = new List<Connection> { Connection.Cable, Connection.ThreeG };
-            var numberRunsTest = 20;
-            var refreshIntervalTime = 5; //sekunds
             var baseAddress = "http://localhost/";
             var path = $@"Result\{version}\";
 
             var executor = new WebPageTestExecutor(Logger,
                 new WebPageTestApiService(baseAddress),
-                new WebPageTestResultExporter(path),
-                refreshIntervalTime);
+                new WebPageTestResultExporter(path));
+            executor.NumberRunsTest = 1;
+            executor.RefreshIntervalTime = 5;//sekunds
+            executor.Connections = new List<Connection>() { Connection.Cable };
+            executor.Browsers = new List<Browser>() { Browser.Chrome };
 
             Task.Run(async () =>
                 {
                     try
                     {
-                        await executor.Execute(pages, browsers, connections, numberRunsTest);
+                        await executor.Execute(pages);
                     }
                     catch (Exception ex)
                     {

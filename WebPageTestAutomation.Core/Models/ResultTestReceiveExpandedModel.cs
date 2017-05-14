@@ -12,5 +12,7 @@ namespace WebPageTestAutomation.Core.Models
         public IList<Run> Runs { get; set; }
         public int KBytes { get; set; }
         public string Url { get; set; }
+        public string Connection { get; set; }
+        public string Browser { get; set; }
     }
 }

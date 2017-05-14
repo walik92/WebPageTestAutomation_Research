@@ -6,6 +6,6 @@ namespace WebPageTestAutomation.Core.ICore
 {
     public interface IWebPageTestResultExporter
     {
-        Task Save(ResultTestReceiveExpandedModel result, PageModel page, Browser browser, Connection connection);
+        Task Save(ResultTestReceiveExpandedModel result, PageModel page);
     }
 }

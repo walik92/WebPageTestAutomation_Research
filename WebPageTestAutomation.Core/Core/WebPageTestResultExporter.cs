@@ -22,7 +22,7 @@ namespace WebPageTestAutomation.Core.Core
 
         private string FileExtension { get; } = ".txt";
 
-        public async Task Save(ResultTestReceiveExpandedModel result, PageModel page, Browser browser, Connection connection)
+        public async Task Save(ResultTestReceiveExpandedModel result, PageModel page)
         {
             if (result == null)
                 throw new ArgumentException("Result test of page can't be empty");
@@ -33,7 +33,7 @@ namespace WebPageTestAutomation.Core.Core
             if (!Directory.Exists(_folder))
                 Directory.CreateDirectory(_folder);
 
-            using (var outputFile = new StreamWriter(GetPathFile(page.Name, browser, connection), false))
+            using (var outputFile = new StreamWriter(GetPathFile(page.Name, result.Browser, result.Connection), false))
             {
                 await outputFile.WriteLineAsync($"URL: {result.Url}");
                 await outputFile.WriteLineAsync($"Framework: {page.Name} v{page.Version}");
@@ -48,7 +48,7 @@ namespace WebPageTestAutomation.Core.Core
             }
         }
 
-        private string GetPathFile(string name, Browser browser, Connection connection)
+        private string GetPathFile(string name, string browser, string connection)
         {
             if (string.IsNullOrEmpty(name) || string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException("Name value can't be empty");

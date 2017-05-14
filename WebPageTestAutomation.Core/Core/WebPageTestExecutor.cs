@@ -13,63 +13,85 @@ namespace WebPageTestAutomation.Core.Core
         private readonly ILog _logger;
         private readonly IWebPageTestApiService _pageTestApiService;
         private readonly IWebPageTestResultExporter _pageTestResultExporter;
-        private readonly int _refreshIntervalTime;
+        private int _refreshIntervalTime;
 
         public WebPageTestExecutor(ILog logger, IWebPageTestApiService pageTestApiService,
-            IWebPageTestResultExporter pageTestResultExporter, int refreshIntervalTime)
+            IWebPageTestResultExporter pageTestResultExporter)
         {
             _logger = logger;
             _pageTestApiService = pageTestApiService;
             _pageTestResultExporter = pageTestResultExporter;
-            _refreshIntervalTime = refreshIntervalTime;
         }
 
-        private int RefreshTimeInterval => _refreshIntervalTime * 1000;
-
-        public async Task Execute(IList<PageModel> pages, IList<Browser> browsers, IList<Connection> connections,
-            int numberOfRuns)
+        public int RefreshIntervalTime
         {
-            foreach (var page in pages)
-                foreach (var browser in browsers)
-                    foreach (var connection in connections)
+            get { return _refreshIntervalTime * 1000; }
+            set { _refreshIntervalTime = value; }
+        }
 
+        public int NumberRunsTest { get; set; }
+        public IList<Connection> Connections { get; set; }
+        public IList<Browser> Browsers { get; set; }
+
+        public async Task Execute(IList<PageModel> pages)
+        {
+            var result = await AddTest(pages);
+            await WaitForResult(result);
+        }
+        public async Task<IDictionary<PageModel, string>> AddTest(IList<PageModel> pages)
+        {
+            var result = new Dictionary<PageModel, string>();
+            foreach (var page in pages)
+                foreach (var connection in Connections)
+                    foreach (var browser in Browsers)
                     {
-                        _logger.Info($"Start test: {page.Name}, browser: {browser}, connection: {connection} ");
+                        _logger.Info($"Start test: {page.Name} v{page.Version}, browser: {browser}, connection: {connection} ");
 
                         //run test
                         var resultTestRequest = ConverterResult.ConvertRequest(
                             await _pageTestApiService.SendTestAsync(page.Url, browser, connection,
-                                numberOfRuns));
+                                NumberRunsTest));
+
+                        var urlResult = resultTestRequest.JsonUrl;
+                        result.Add(page, urlResult);
 
                         _logger.Info("Test added correctly. " +
                                      $"Response of server {resultTestRequest.StatusCode}" +
                                      $" : {resultTestRequest.StatusText}");
 
-                        //waiting for result
-                        do
-                        {
-                            var jsonResult = await _pageTestApiService.GetResultOfTestAsync(resultTestRequest.JsonUrl);
-                            if (string.IsNullOrEmpty(jsonResult))
-                                continue;
-                            var testResult = ConverterResult.ConvertReceive(jsonResult);
-
-                            if (testResult is ResultTestReceiveExpandedModel)
-                            {
-                                _logger.Debug(testResult as ResultTestReceiveExpandedModel);
-
-                                //save result
-                                await _pageTestResultExporter.Save(testResult as ResultTestReceiveExpandedModel, page, browser, connection);
-                                break;
-                            }
-
-                            _logger.Info("Waiting from result test of server. " +
-                                         $"Response of server {testResult.StatusCode}" +
-                                         $" : {testResult.StatusText}");
-                            await Task.Delay(RefreshTimeInterval);
-                        } while (true);
-
-                        _logger.Info($"End test: {page.Name} browser: {browser} connection: {connection} ");
+                        _logger.Info($"End test: {page.Name} v{page.Version}, browser: {browser} connection: {connection} ");
                     }
+            return result;
         }
+        private async Task WaitForResult(IDictionary<PageModel, string> runnedTests)
+        {
+            foreach (var test in runnedTests)
+            {
+                do
+                {
+                    var jsonResult = await _pageTestApiService.GetResultOfTestAsync(test.Value);
+                    if (string.IsNullOrEmpty(jsonResult))
+                        continue;
+                    var testResult = ConverterResult.ConvertReceive(jsonResult);
+                    //result ok
+                    if (testResult is ResultTestReceiveExpandedModel)
+                    {
+                        _logger.Debug(testResult as ResultTestReceiveExpandedModel);
+
+                        //save result
+                        await _pageTestResultExporter.Save(testResult as ResultTestReceiveExpandedModel, test.Key);
+                        break;
+                    }
+
+                    _logger.Info("Waiting from result test of server. " +
+                                 $"Response of server {testResult.StatusCode}" +
+                                 $" : {testResult.StatusText} {test.Key.Name} v{test.Key.Version}");
+                    await Task.Delay(RefreshIntervalTime);
+                } while (true);
+            }
+
+        }
+
+
     }
 }

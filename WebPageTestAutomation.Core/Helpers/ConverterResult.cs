@@ -8,7 +8,7 @@ namespace WebPageTestAutomation.Core.Helpers
     {
         public static ResultTestReceiveBaseModel ConvertReceive(string json)
         {
-            
+
             dynamic responseObj = JsonConvert.DeserializeObject(json);
 
             var statusCode = (int)responseObj.statusCode.Value;
@@ -28,7 +28,7 @@ namespace WebPageTestAutomation.Core.Helpers
                     StatusCode = statusCode,
                     StatusText = statusText
                 };
-                
+
                 result.Url = responseObj.data.url;
                 foreach (var r in responseObj.data.runs)
                 {
@@ -43,8 +43,13 @@ namespace WebPageTestAutomation.Core.Helpers
                     run.SpeedIndex = (int)r.Value.firstView.SpeedIndex.Value;
                     run.VisuallyComplete = (int)r.Value.firstView.visualComplete.Value;
                     result.Runs.Add(run);
-                    result.KBytes = ((int)r.Value.firstView.breakdown.js.bytes)/1024;
+                    if (result.KBytes != 0)
+                        continue;
+                    result.KBytes = ((int)r.Value.firstView.breakdown.js.bytes) / 1024;
+                    result.Browser = r.Value.firstView.browser_name;
                 }
+                result.Connection = responseObj.data.connectivity;
+
                 return result;
             }
             throw new Exception("Error while receive results test. " +
@@ -56,17 +61,19 @@ namespace WebPageTestAutomation.Core.Helpers
         {
             dynamic responseObj = JsonConvert.DeserializeObject(json);
 
+            var httpCode = (int)responseObj.statusCode.Value;
+
+            if (httpCode != 200)
+                throw new Exception($"Error while adding test. " +
+                                    $"HttpCode {httpCode} " +
+                                    $"ErrorText:{responseObj.statusText.Value}");
+
             var result = new ResultTestRequestModel
             {
-                StatusCode = (int)responseObj.statusCode.Value,
+                StatusCode = httpCode,
                 StatusText = responseObj.statusText.Value,
                 JsonUrl = responseObj.data.jsonUrl
             };
-
-            if (result.StatusCode != 200)
-                throw new Exception($"Error while adding test. " +
-                                    $"HttpCode {result.StatusCode} " +
-                                    $"ErrorText:{result.StatusText}");
             return result;
         }
     }
