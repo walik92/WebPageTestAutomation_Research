@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Enumerators\Browser.cs" />
+    <Compile Include="Enumerators\Mobile.cs" />
     <Compile Include="Helpers\ConverterResult.cs" />
     <Compile Include="ICore\IWebPageTestExecutor.cs" />
     <Compile Include="ICore\IWebPageTestResultExporter.cs" />

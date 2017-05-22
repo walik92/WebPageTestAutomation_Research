@@ -7,5 +7,6 @@ namespace WebPageTestAutomation.Core.ICore
     {
         Task<string> GetResultOfTestAsync(string urlTestResult);
         Task<string> SendTestAsync(string urlPage, Browser browser, Connection connection, int numberRuns);
+        Task<string> SendTestAsync(string urlPage, Mobile mobile, int numberRuns);
     }
 }

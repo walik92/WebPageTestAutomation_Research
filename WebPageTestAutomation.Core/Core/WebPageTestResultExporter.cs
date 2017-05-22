@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
-using WebPageTestAutomation.Core.Enumerators;
 using WebPageTestAutomation.Core.ICore;
 using WebPageTestAutomation.Core.Models;
 
@@ -52,8 +51,7 @@ namespace WebPageTestAutomation.Core.Core
         {
             if (string.IsNullOrEmpty(name) || string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException("Name value can't be empty");
-            return $"{_folder}{name}_{browser}_{connection}{ FileExtension}";
-
+            return $"{_folder}{name}_{browser}_{connection}{FileExtension}";
         }
     }
 }

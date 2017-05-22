@@ -10,6 +10,8 @@ namespace WebPageTestAutomation.Core.Test.Core
     public class WebPageTestResultExporterTest
     {
         private const string _folder = @"Result\";
+        private const string _browser = "Opera";
+        private const string _connection = "Cable";
         private ResultTestReceiveExpandedModel _modelReceive;
 
         [TestInitialize]
@@ -27,6 +29,8 @@ namespace WebPageTestAutomation.Core.Test.Core
                 Ttfb = 100,
                 VisuallyComplete = 1000
             });
+            _modelReceive.Browser = _browser;
+            _modelReceive.Connection = _connection;
             _modelReceive.Runs.Add(new Run
             {
                 Id = 2,
@@ -42,13 +46,19 @@ namespace WebPageTestAutomation.Core.Test.Core
         public async Task TestSave()
         {
             var fileName = "Example";
+            var page = new PageModel();
+            page.Name = "test";
+            page.Version = "1.0.0";
+            page.Url = "test.pl";
+
             var exporter = new WebPageTestResultExporter(_folder);
             var obj = new PrivateObject(exporter);
-            var args = new object[1] {fileName};
+            var args = new object[3] {page.Name, _browser, _connection};
             var retval = obj.Invoke("GetPathFile", args);
             if (File.Exists(retval.ToString()))
                 File.Delete(retval.ToString());
-            await exporter.Save(_modelReceive, fileName);
+
+            await exporter.Save(_modelReceive, page);
             Assert.IsTrue(File.Exists(retval.ToString()));
         }
     }

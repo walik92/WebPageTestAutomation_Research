@@ -21,7 +21,7 @@ namespace WebPageTestAutomation.Core.Core
         }
 
         /// <summary>
-        ///     Send request to server for execution test of page
+        ///     Send request to server for execution test of page PC
         /// </summary>
         /// <param name="urlPage">Address site</param>
         /// <param name="browser">Type of browser</param>
@@ -31,23 +31,21 @@ namespace WebPageTestAutomation.Core.Core
         public async Task<string> SendTestAsync(string urlPage, Browser browser, Connection connection,
             int numberRuns)
         {
-            if (string.IsNullOrEmpty(urlPage) || string.IsNullOrWhiteSpace(urlPage))
-                throw new ArgumentException("Url page can't be empty.");
-            if (numberRuns < 1)
-                throw new ArgumentException($"The number of run tests is invalid. Value: {numberRuns}");
+            var location = $"WPT_eu_frankfurt:{browser}.{connection.GetString()}";
+            return await RunTest(urlPage, location, numberRuns);
+        }
 
-            using (var client = new HttpClient())
-            {
-                client.BaseAddress = new Uri(_baseAddress);
-
-                var httpResponseMessage = await client.GetAsync($"runtest.php?url={urlPage}" +
-                                                                "&f=json" +
-                                                                $"&location=WPT_eu_frankfurt:{browser}.{connection.GetString()}" +
-                                                                $"&runs={numberRuns}" +
-                                                                "&fvonly=1");
-
-                return await httpResponseMessage.Content.ReadAsStringAsync();
-            }
+        /// <summary>
+        ///     Send request to server for execution test of page Mobile
+        /// </summary>
+        /// <param name="urlPage">Address site</param>
+        /// <param name="mobile">Mobile</param>
+        /// <param name="numberRuns">Number of test run</param>
+        /// <returns></returns>
+        public async Task<string> SendTestAsync(string urlPage, Mobile mobile, int numberRuns)
+        {
+            var location = $"WPT_mobile:{mobile.GetString()}.{Connection.ThreeG.GetString()}";
+            return await RunTest(urlPage, location, numberRuns);
         }
 
         /// <summary>
@@ -65,6 +63,28 @@ namespace WebPageTestAutomation.Core.Core
                     await client.GetAsync(urlTestResult);
 
                 return await responseMessage.Content.ReadAsStringAsync();
+            }
+        }
+
+        private async Task<string> RunTest(string urlPage, string location, int numberRuns)
+        {
+            if (string.IsNullOrEmpty(urlPage) || string.IsNullOrWhiteSpace(urlPage))
+                throw new ArgumentException("Url page can't be empty.");
+            if (numberRuns < 1)
+                throw new ArgumentException($"The number of run tests is invalid. Value: {numberRuns}");
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(_baseAddress);
+
+                var httpResponseMessage = await client.GetAsync($"runtest.php?url={urlPage}" +
+                                                                "&f=json" +
+                                                                $"&location={location}" +
+                                                                $"&runs={numberRuns}" +
+                                                                "&fvonly=1" +
+                                                                "&video=on");
+
+                return await httpResponseMessage.Content.ReadAsStringAsync();
             }
         }
     }

@@ -8,10 +8,9 @@ namespace WebPageTestAutomation.Core.Helpers
     {
         public static ResultTestReceiveBaseModel ConvertReceive(string json)
         {
-
             dynamic responseObj = JsonConvert.DeserializeObject(json);
 
-            var statusCode = (int)responseObj.statusCode.Value;
+            var statusCode = (int) responseObj.statusCode.Value;
             string statusText = responseObj.statusText.Value;
 
             if (statusCode < 200)
@@ -33,19 +32,19 @@ namespace WebPageTestAutomation.Core.Helpers
                 foreach (var r in responseObj.data.runs)
                 {
                     var run = new Run();
-                    run.Id = (int)r.Value.firstView.run.Value;
+                    run.Id = (int) r.Value.firstView.run.Value;
                     if (r.Value.firstView.loadTime.Value == 0)
                         throw new Exception("Result response from server is incorrect");
 
-                    run.LoadTime = (int)r.Value.firstView.loadTime.Value;
-                    run.RenderStart = (int)r.Value.firstView.render.Value;
-                    run.Ttfb = (int)r.Value.firstView.TTFB.Value;
-                    run.SpeedIndex = (int)r.Value.firstView.SpeedIndex.Value;
-                    run.VisuallyComplete = (int)r.Value.firstView.visualComplete.Value;
+                    run.LoadTime = (int) r.Value.firstView.loadTime.Value;
+                    run.RenderStart = (int) r.Value.firstView.render.Value;
+                    run.Ttfb = (int) r.Value.firstView.TTFB.Value;
+                    run.SpeedIndex = (int) r.Value.firstView.SpeedIndex.Value;
+                    run.VisuallyComplete = (int) r.Value.firstView.visualComplete.Value;
                     result.Runs.Add(run);
                     if (result.KBytes != 0)
                         continue;
-                    result.KBytes = ((int)r.Value.firstView.breakdown.js.bytes) / 1024;
+                    result.KBytes = (int) r.Value.firstView.breakdown.js.bytes / 1024;
                     result.Browser = r.Value.firstView.browser_name;
                 }
                 result.Connection = responseObj.data.connectivity;
@@ -61,7 +60,7 @@ namespace WebPageTestAutomation.Core.Helpers
         {
             dynamic responseObj = JsonConvert.DeserializeObject(json);
 
-            var httpCode = (int)responseObj.statusCode.Value;
+            var httpCode = (int) responseObj.statusCode.Value;
 
             if (httpCode != 200)
                 throw new Exception($"Error while adding test. " +

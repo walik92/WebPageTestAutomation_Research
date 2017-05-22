@@ -43,8 +43,8 @@ namespace WebPageTestAutomation.Core.Test.Core
         [TestMethod]
         public async Task TestExecute1()
         {
-            var executor = new WebPageTestExecutor(_logger.Object, _service.Object, _exporter.Object, 1);
-            await executor.Execute(pages, browsers, connections, numberRunsTest);
+            var executor = new WebPageTestExecutor(_logger.Object, _service.Object, _exporter.Object);
+            await executor.Execute(pages);
         }
 
         private Mock<ILog> MockLog()
@@ -82,7 +82,7 @@ namespace WebPageTestAutomation.Core.Test.Core
         private Mock<IWebPageTestResultExporter> MockExporter()
         {
             var exporter = new Mock<IWebPageTestResultExporter>();
-            exporter.Setup(q => q.Save(It.IsAny<ResultTestReceiveExpandedModel>(), It.IsAny<string>()))
+            exporter.Setup(q => q.Save(It.IsAny<ResultTestReceiveExpandedModel>(), It.IsAny<PageModel>()))
                 .Returns(Task.CompletedTask);
             return exporter;
         }

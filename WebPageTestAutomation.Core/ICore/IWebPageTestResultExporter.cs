@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using WebPageTestAutomation.Core.Enumerators;
 using WebPageTestAutomation.Core.Models;
 
 namespace WebPageTestAutomation.Core.ICore

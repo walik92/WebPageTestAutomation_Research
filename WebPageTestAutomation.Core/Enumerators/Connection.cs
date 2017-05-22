@@ -7,7 +7,7 @@
         ThreeG
     }
 
-    public static class Extensions
+    public static class ExtensionsConnection
     {
         public static string GetString(this Connection connection)
         {
